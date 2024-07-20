@@ -1,0 +1,16 @@
+<!doctype html>
+    <head>
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>welcome</title>
+    {% endif %}
+    </head>
+
+    <body>
+        <div>everest: <a href="/index">home</a></div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+
+</html>
