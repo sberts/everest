@@ -49,9 +49,7 @@ if app.config['DISCORD_WEBHOOK_URL']:
     discord_handler.setLevel(logging.ERROR)  # Change this to control the level of logging sent to Discord
     discord_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-
     app.logger.addHandler(discord_handler)
-
 
 if app.config['LOG_TO_FILE']:
     if not os.path.exists('logs'):
