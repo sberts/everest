@@ -25,18 +25,16 @@ def index():
         db.session.commit()
         flash('Your project is now live!')
         return redirect(url_for('index'))
-    projects = [
-        {
-            'owner': {'username': 'John'},
-            'project_name': 'Project 1'
-        },
-        {
-            'owner': {'username': 'Susan'},
-            'project_name': 'Project 2'
-        }
-    ]
-    projects = db.session.scalars(current_user.following_projects()).all()
-    return render_template('index.html', title='Home', form=form, projects=projects)
+    page = request.args.get('page', 1, type=int)
+    projects = db.paginate(current_user.following_projects(), page=page,
+        per_page=app.config['PROJECTS_PER_PAGE'], error_out=False)
+    next_url = url_for('index', page=projects.next_num) \
+        if projects.has_next else None
+    prev_url = url_for('index', page=projects.prev_num) \
+        if projects.has_prev else None
+    return render_template('index.html', title='Home', form=form,
+        projects=projects.items, next_url=next_url,
+        prev_url=prev_url)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -79,13 +77,19 @@ def register():
 @app.route('/user/<username>')
 @login_required
 def user(username):
-    form = EmptyForm()
     user = db.first_or_404(sa.select(User).where(User.username == username))
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
-    return render_template('user.html', user=user, posts=posts, form=form)
+    page = request.args.get('page', 1, type=int)
+    query = user.projects.select().order_by(Project.timestamp.desc())
+    projects = db.paginate(query, page=page,
+        per_page=app.config['PROJECTS_PER_PAGE'],
+        error_out=False)
+    next_url = url_for('user', username=user.username, page=projects.next_num) \
+        if projects.has_next else None
+    prev_url = url_for('user', username=user.username, page=projects.prev_num) \
+        if projects.has_prev else None
+    form = EmptyForm()
+    return render_template('user.html', user=user, projects=projects,
+        next_url=next_url, prev_url=prev_url, form=form)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
@@ -150,6 +154,13 @@ def unfollow(username):
 @app.route('/explore')
 @login_required
 def explore():
+    page = request.args.get('page', 1, type=int)
     query = sa.select(Project).order_by(Project.timestamp.desc())
-    projects = db.session.scalars(query).all()
-    return render_template('index.html', title='Explore', projects=projects)
+    projects = db.paginate(query, page=page,
+        per_page=app.config['PROJECTS_PER_PAGE'], error_out=False)
+    next_url = url_for('explore', page=projects.next_num) \
+        if projects.has_next else None
+    prev_url = url_for('explore', page=projects.prev_num) \
+        if projects.has_prev else None
+    return render_template('index.html', title='Explore', projects=projects.items,
+        next_url=next_url, prev_url=prev_url)

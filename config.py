@@ -7,3 +7,4 @@ class Config:
         'sqlite:///' + os.path.join(basedir, 'app.db')
     DISCORD_WEBHOOK_URL = os.environ.get('DISCORD_WEBHOOK_URL') or False
     LOG_TO_FILE = os.environ.get('LOG_TO_FILE') or False
+    PROJECTS_PER_PAGE = 10

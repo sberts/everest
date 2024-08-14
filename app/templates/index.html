@@ -16,6 +16,12 @@
     </form>
     {% endif %}
     {% for project in projects %}
-    <div><p>{{ project.owner.username }} says: {{ project.project_name }}</p></div>
+    {% include '_project.html' %}
     {% endfor %}
+    {% if prev_url %}
+    <a href="{{ prev_url }}">Newer Projects</a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}">Older Projects</a>
+    {% endif %}
 {% endblock %}
