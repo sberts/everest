@@ -32,7 +32,7 @@
     <hr>
     <h1>User: {{ user.username}}</h1>
     <hr>
-    {% for post in posts %}
-        {% include '_post.html' %}
+    {% for project in projects %}
+        {% include '_project.html' %}
     {% endfor %}
 {% endblock %}

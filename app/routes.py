@@ -1,10 +1,10 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, ProjectForm
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
 from app import db
-from app.models import User
+from app.models import User, Project
 from urllib.parse import urlsplit
 from datetime import datetime, timezone
 
@@ -14,21 +14,29 @@ def before_request():
         current_user.last_seen = datetime.now(timezone.utc)
         db.session.commit()
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    posts = [
+    form = ProjectForm()
+    if form.validate_on_submit():
+        project = Project(project_name=form.project_name.data, owner=current_user)
+        db.session.add(project)
+        db.session.commit()
+        flash('Your project is now live!')
+        return redirect(url_for('index'))
+    projects = [
         {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
+            'owner': {'username': 'John'},
+            'project_name': 'Project 1'
         },
         {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
+            'owner': {'username': 'Susan'},
+            'project_name': 'Project 2'
         }
     ]
-    return render_template('index.html', title='Home', posts=posts)
+    projects = db.session.scalars(current_user.following_projects()).all()
+    return render_template('index.html', title='Home', form=form, projects=projects)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -138,3 +146,10 @@ def unfollow(username):
         return redirect(url_for('user', username=username))
     else:
         return redirect(url_for('index'))
+
+@app.route('/explore')
+@login_required
+def explore():
+    query = sa.select(Project).order_by(Project.timestamp.desc())
+    projects = db.session.scalars(query).all()
+    return render_template('index.html', title='Explore', projects=projects)
