@@ -1,37 +1,41 @@
 from botocore.exceptions import ClientError
 from app import app, ses_client
 from flask import render_template
+from threading import Thread
+
+def send_async_email(app, msg):
+    with app.app_context():
+        try:
+            response = ses_client.send_email(**msg)
+        except ClientError as e:
+            print(f"Error sending email: {e}")
+        else:
+            print(f"Email sent! Message ID: {response['MessageId']}")
 
 def send_email(subject, sender, recipients, text_body, html_body):
-    try:
-        response = ses_client.send_email(
-            Destination={
-                'ToAddresses': recipients
-            },
-            Message={
-                'Body': {
-                    'Html': {
-                        'Charset': 'UTF-8',
-                        'Data': html_body,
-                    },
-                    'Text': {
-                        'Charset': 'UTF-8',
-                        'Data': text_body,
-                    },
-                },
-                'Subject': {
+    msg = {
+        'Destination': {
+            'ToAddresses': recipients
+        },
+        'Message': {
+            'Body': {
+                'Html': {
                     'Charset': 'UTF-8',
-                    'Data': subject,
+                    'Data': html_body,
+                },
+                'Text': {
+                    'Charset': 'UTF-8',
+                    'Data': text_body,
                 },
             },
-            Source=sender,
-        )
-    except ClientError as e:
-        print(e.response['Error']['Message'])
-        # send error to discord
-    else:
-        print("Email sent! Message ID:"),
-        print(response['MessageId'])
+            'Subject': {
+                'Charset': 'UTF-8',
+                'Data': subject,
+            },
+        },
+        'Source': sender
+    }
+    Thread(target=send_async_email, args=(app, msg)).start()
 
 def send_password_reset_email(user):
     token = user.get_reset_password_token()
