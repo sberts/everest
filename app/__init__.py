@@ -7,12 +7,15 @@ import requests
 import logging
 from logging.handlers import RotatingFileHandler
 import os
+import boto3
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 login = LoginManager(app)
 login.login_view = 'login'
+
+ses_client = boto3.client('ses',region_name=Config.AWS_REGION)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

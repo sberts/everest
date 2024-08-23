@@ -8,3 +8,4 @@ class Config:
     DISCORD_WEBHOOK_URL = os.environ.get('DISCORD_WEBHOOK_URL') or False
     LOG_TO_FILE = os.environ.get('LOG_TO_FILE') or False
     PROJECTS_PER_PAGE = 10
+    AWS_REGION = os.environ.get('AWS_REGION') or 'us-west-2'
