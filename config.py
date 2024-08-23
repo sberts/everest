@@ -9,3 +9,4 @@ class Config:
     LOG_TO_FILE = os.environ.get('LOG_TO_FILE') or False
     PROJECTS_PER_PAGE = 10
     AWS_REGION = os.environ.get('AWS_REGION') or 'us-west-2'
+    NOREPLY_EMAIL = os.environ.get('NOREPLY_EMAIL') or 'Neatshell Password <no-reply@neatshell.com>'

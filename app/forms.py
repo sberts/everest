@@ -8,6 +8,10 @@ from app.models import User
 class EmptyForm(FlaskForm):
     submit = SubmitField('Submit')
 
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
 class ProjectForm(FlaskForm):
     project_name = TextAreaField('Project Name', validators=[
         DataRequired(), Length(min=1, max=140)])
@@ -53,3 +57,9 @@ class RegistrationForm(FlaskForm):
             User.email == email.data))
         if user is not None:
             raise ValidationError('Please use a different email address.')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Request Password Reset')
