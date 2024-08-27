@@ -8,7 +8,7 @@ def send_async_email(app, msg):
         try:
             response = ses_client.send_email(**msg)
         except ClientError as e:
-            print(f"Error sending email: {e}")
+            app.logger.error(f"Error sending email: {e}")
         else:
             print(f"Email sent! Message ID: {response['MessageId']}")
 
