@@ -1,27 +1,26 @@
 {% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
 
 {% block content %}
-    <h1>hello, {{ current_user.username }}!</h1>
+    <h1>Hi, {{ current_user.username }}!</h1>
     {% if form %}
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.project_name.label }}<br>
-            {{ form.project_name(cols=32, rows=4) }}<br>
-            {% for error in form.project_name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+    {{ wtf.quick_form(form) }}
     {% endif %}
     {% for project in projects %}
-    {% include '_project.html' %}
+        {% include '_project.html' %}
     {% endfor %}
-    {% if prev_url %}
-    <a href="{{ prev_url }}">Newer Projects</a>
-    {% endif %}
-    {% if next_url %}
-    <a href="{{ next_url }}">Older Projects</a>
-    {% endif %}
+    <nav aria-label="Project navigation">
+        <ul class="pagination">
+            <li class="page-item{% if not prev_url %} disabled{% endif %}">
+                <a class="page-link" href="{{ prev_url }}">
+                    <span aria-hidden="true">&larr;</span> Newer projects
+                </a>
+            </li>
+            <li class="page-item{% if not next_url %} disabled{% endif %}">
+                <a class="page-link" href="{{ next_url }}">
+                    Older projects <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 {% endblock %}
