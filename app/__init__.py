@@ -8,9 +8,12 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 import boto3
+from flask_moment import Moment
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+moment = Moment(app)
 
 login = LoginManager(app)
 login.login_view = 'login'
