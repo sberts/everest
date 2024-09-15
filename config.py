@@ -10,3 +10,4 @@ class Config:
     PROJECTS_PER_PAGE = 3
     AWS_REGION = os.environ.get('AWS_REGION') or 'us-west-2'
     NOREPLY_EMAIL = os.environ.get('NOREPLY_EMAIL') or 'Neatshell Password <no-reply@neatshell.com>'
+    LANGUAGES = ['en', 'es']
