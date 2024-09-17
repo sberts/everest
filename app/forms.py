@@ -4,6 +4,7 @@ from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Le
 import sqlalchemy as sa
 from app import db
 from app.models import User
+from flask_babel import _, lazy_gettext as _l
 
 class EmptyForm(FlaskForm):
     submit = SubmitField('Submit')
@@ -34,10 +35,10 @@ class EditProfileForm(FlaskForm):
                 raise ValidationError('Please use a different username.')
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
-    submit = SubmitField('Sign in')
+    username = StringField(_l('Username'), validators=[DataRequired()])
+    password = PasswordField(_l('Password'), validators=[DataRequired()])
+    remember_me = BooleanField(_l('Remember Me'))
+    submit = SubmitField(_l('Sign in'))
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])

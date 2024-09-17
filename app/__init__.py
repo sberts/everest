@@ -1,4 +1,4 @@
-from flask import Flask request
+from flask import Flask, request
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -9,7 +9,7 @@ from logging.handlers import RotatingFileHandler
 import os
 import boto3
 from flask_moment import Moment
-from flask_babelk import Babel
+from flask_babel import Babel
 
 def get_locale():
     return request.accept_languages.best_match(app.config['LANGUAGES'])

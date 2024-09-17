@@ -6,11 +6,15 @@
             </a>
         </td>
         <td>
-            <a href="{{ url_for('user', username=project.owner.username) }}">
-                {{ project.owner.username }}
-            </a>
-            created {{ moment(project.timestamp).fromNow() }}:
-            <br>{{ project.project_name }}
+            {% set user_link %}
+                <a href="{{ url_for('user', username=project.owner.username) }}">
+                    {{ project.owner.username }}
+                </a>
+            {% endset %}
+            {{ _('%(username)s said %(when)s',
+                username=user_link, when=moment(project.timestamp).fromNow()) }}
+            <br>
+            {{ project.project_name }}
         </td>
     </tr>
 </table>
